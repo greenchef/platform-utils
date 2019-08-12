@@ -6,7 +6,13 @@ Copy `.env-eample` to `.env` and run tests with `npm test`.
 ## How to use
 Install as a github npm module, and import like so:
 ```
-const initializers = require('platform-utils/initializers');
+// For all initializers to be run...
+require('platform-utils/initializers');
+const { logger } = require('platform-utils/initializers/logger');
+
+// For a particular initializer without running them all
+const joi = require('platform-utils/initializers/joi');
+
 const joiUtils = require('platform-utils/joi');
 const mongooseUtils = require('platform-utils/mongoose');
 ```
