@@ -1,0 +1,4 @@
+# Only need to put things here not covered by the .gitignore
+.*
+README
+tests
