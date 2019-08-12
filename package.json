@@ -1,0 +1,10 @@
+{
+  "name": "utils",
+  "version": "1.0.0",
+  "description": "A collection of various utilities to be used across the Green Chef ecosystem.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Green Chef",
+  "license": "ISC"
+}
