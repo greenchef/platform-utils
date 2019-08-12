@@ -16,3 +16,17 @@ Our systems should **always** reference the package by a particular release tag 
 
 When making changes, recognize that you are changing a package that is used across all of our services.
 Make a release tag that follows [semver standards](https://docs.npmjs.com/about-semantic-versioning).
+
+**Semver is extremely important, so PLEASE learn it and use it correctly or our services will break.**
+
+## Expected ENV VARS:
+```
+LOG_LEVEL
+LOGGER_NAME
+
+MONGODB_URI
+MONGODB_NAME
+MONGODB_OPTIONS
+OR
+MONGO_URI
+```
