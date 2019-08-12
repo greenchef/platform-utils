@@ -1,0 +1,3 @@
+beforeEach(() => {
+	require('../initializers/dotenv');
+})

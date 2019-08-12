@@ -1,5 +1,8 @@
 # Platform Utils
 
+## Get started
+Copy `.env-eample` to `.env` and run tests with `npm test`.
+
 ## How to use
 Install as a github npm module, and import like so:
 ```
@@ -21,7 +24,7 @@ Make a release tag that follows [semver standards](https://docs.npmjs.com/about-
 
 **Semver is extremely important, so PLEASE learn it and use it correctly or our services will break.**
 
-## Expected ENV VARS:
+## Expected ENV VARS in platforms that use this package:
 ```
 LOG_LEVEL
 LOGGER_NAME
