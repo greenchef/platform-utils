@@ -3,9 +3,11 @@
 ## How to use
 Install as a github npm module, and import like so:
 ```
-const mongooseUtils = require('gc-utils/mongoose');
+const initializers = require('platform-utils/initializers');
+const joiUtils = require('platform-utils/joi');
+const mongooseUtils = require('platform-utils/mongoose');
 ```
-Note that each kind of utility file is a separate sub-directory of the gc-utils package.
+Note that each kind of utility file is a separate sub-directory of the platform-utils package.
 
 ## How to Maintain
 Our systems should **always** reference the package by a particular release tag so we can manage versions appropriately:
