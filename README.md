@@ -15,6 +15,7 @@ const joi = require('platform-utils/initializers/joi');
 
 const joiUtils = require('platform-utils/joi');
 const mongooseUtils = require('platform-utils/mongoose');
+const rosieUtils = require('platform-utils/rosie');
 ```
 Note that each kind of utility file is a separate sub-directory of the platform-utils package.
 
