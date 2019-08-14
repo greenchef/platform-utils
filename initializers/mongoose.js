@@ -10,7 +10,11 @@ try {
 	const connectWithRetry = () => {
 		mongoose.Promise = global.Promise;
 
-		return mongoose.connect(utils.getMongoConnectionString(), { useMongoClient: true, useNewUrlParser: true }, (err) => {
+		const isMongoose5 = mongoose.version && mongoose.version.startsWith('5');
+		let options = { useNewUrlParser: true };
+		if (!isMongoose5) options = { ...options, useMongoClient: true };
+
+		return mongoose.connect(utils.getMongoConnectionString(), options, (err) => {
 			if (err) {
 				logger.error('Failed to connect to mongo on startup - retrying in 5 sec', err);
 				setTimeout(connectWithRetry, 5000);
