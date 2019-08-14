@@ -8,6 +8,7 @@
   "author": "Green Chef",
   "license": "ISC",
   "dependencies": {
+    "basic-auth": "2.0.1",
     "bunyan": "1.8.12",
     "dotenv": "6.1.0",
     "dotenv-parse-variables": "0.2.2",

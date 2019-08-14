@@ -41,4 +41,7 @@ MONGODB_NAME
 MONGODB_OPTIONS
 OR
 MONGO_URI
+
+# Optional
+ARENA_PASSWORD # If your application uses Bull Arena
 ```
