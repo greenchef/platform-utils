@@ -12,7 +12,9 @@
     "bunyan": "1.8.12",
     "dotenv": "6.1.0",
     "dotenv-parse-variables": "0.2.2",
-    "joi": "13.7.0"
+    "fold-to-ascii": "^5.0.0",
+    "joi": "13.7.0",
+    "xss": "^1.0.6"
   },
   "peerDependencies": {
     "boom": "7.x",
