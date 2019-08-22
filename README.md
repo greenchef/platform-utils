@@ -1,7 +1,7 @@
 # Platform Utils
 
 ## Get started
-Copy `.env-eample` to `.env` and run tests with `npm test`.
+Copy `.env-example` to `.env` and run tests with `npm test`.
 
 ## How to use
 Install as a github npm module, and import like so:
