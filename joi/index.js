@@ -1,6 +1,9 @@
 const Boom = require('boom');
 const Joi = require('../initializers/joi');
 
+// string for a dollar amount, ex. $45.87, $25,068.99
+const joiDollarString = () => Joi.string().regex(/^\$\d{1,3}(,\d{3})*\.\d{2}$/);
+
 // joi mongo id checking.
 const joiMongoId = () => {
 	return Joi.string().regex(/^[a-f\d]{24}$/i);
@@ -32,6 +35,7 @@ const defaultSearchSchema = {
 
 module.exports = {
 	defaultSearchSchema,
+	joiDollarString,
 	joiMongoId,
 	joiSimpleDate,
 	joiZipCode,
