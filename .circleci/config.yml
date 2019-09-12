@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:8.11.2
+      - image: circleci/node:10
       - image: mongo:3.6 # accessible on localhost:27017
     steps:
       - checkout
