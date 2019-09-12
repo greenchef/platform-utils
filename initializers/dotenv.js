@@ -1,6 +1,7 @@
 const dotenv = require('dotenv');
-const dotenvParseVariables = require('dotenv-parse-variables');
 
-const env = dotenv.config();
-if (env.error) console.log(env.error);
-dotenvParseVariables(env.parsed);
+const { error } = dotenv.config();
+if (error) {
+	console.error('Failed to parse environment variables.', error);
+	throw error;
+}
