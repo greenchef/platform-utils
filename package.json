@@ -1,6 +1,6 @@
 {
   "name": "gc-platform-utils",
-  "version": "1.0.0",
+  "version": "3.2.0",
   "description": "A collection of various utilities to be used across the Green Chef ecosystem.",
   "scripts": {
     "test": "jest"
@@ -11,6 +11,7 @@
     "basic-auth": "2.0.1",
     "bunyan": "1.8.12",
     "dotenv": "6.1.0",
+    "elastic-apm-node": "2.16.2",
     "joi": "13.7.0"
   },
   "peerDependencies": {
