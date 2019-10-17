@@ -5,10 +5,9 @@ const { logger } = require('../initializers');
 // Needs to be after other initializers for dotenv loading
 const arenaAuth = require('../initializers/arena-auth');
 
-let jobs = [];
+const jobs = require('./models');
 
-const register = (jobsToRegister) => {
-	jobs = jobsToRegister;
+const register = () => {
 	const arenaQueues = [];
 	// For all the jobs I'v loaded start their workers by calling connect()
 	jobs.modelNames().forEach((name) => {
@@ -20,7 +19,7 @@ const register = (jobsToRegister) => {
 			redis: {
 				db: parseInt(process.env.REDIS_BULL_DB) || 12,
 				host: `${process.env.REDIS_HOST}`,
-				port: 6379,
+				port: parseInt(process.env.REDIS_PORT) || 6379,
 			}
 		});
 	});
@@ -41,7 +40,7 @@ const register = (jobsToRegister) => {
 
 	// set app constants
 	app.set('host', '127.0.0.1');
-	app.set('port', 4000);
+	app.set('port', parseInt(process.env.ARENA_PORT) || 4000);
 
 	app.use(arenaAuth);
 	app.use('/', arenaConfig);
@@ -52,8 +51,7 @@ const register = (jobsToRegister) => {
 	});
 }
 
-const deregister = (jobsToDeregister) => {
-	jobs = jobsToDeregister || jobs;
+const deregister = () => {
 	logger.info('worker - shutdown');
 	jobs.modelNames().forEach((name) => {
 		jobs.model(name).disconnect();
