@@ -1,3 +1,3 @@
-beforeEach(() => {
+beforeAll(() => {
 	require('../initializers/dotenv');
 })
