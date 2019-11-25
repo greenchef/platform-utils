@@ -1,5 +1,6 @@
 const Joi = require('../initializers/joi');
 const Queue = require('bull');
+const apm = require('../initializers/elastic-apm');
 const logger = require('../initializers/logger');
 
 class BaseJob {
@@ -70,10 +71,25 @@ class BaseJob {
 	}
 
 	startWorker() {
+		this.queue.on('failed', function(job, err){
+			// A job failed with reason `err`!
+			apm.captureError(err);
+		})
+		this.queue.on('error', function(err){
+			// A job failed with reason `err`!
+			apm.captureError(err);
+		})
 		this.queue.process(this.concurrency, async (job, done) => {
-			this.work(job.data, job, done);
+			const apmTransaction = apm.startTransaction(this.constructor.name, 'job');
+			const doneWrapper = (err) => {
+				apmTransaction.result = err ? 'error' : 'success'
+				apmTransaction.end();
+				done(err);
+			}
+			this.work(job.data, job, doneWrapper, apmTransaction);
 		});
 		this.queue.resume(); // resume any paused queues when service restarts
+
 	}
 }
 
