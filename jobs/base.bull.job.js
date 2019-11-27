@@ -2,6 +2,9 @@ const Joi = require('../initializers/joi');
 const Queue = require('bull');
 const apm = require('../initializers/elastic-apm');
 const logger = require('../initializers/logger');
+const merge = require('merge-deep');
+
+
 
 class BaseJob {
 	constructor(queueName, concurrency = 1, overrideQueueOptions = {}) {
@@ -19,7 +22,7 @@ class BaseJob {
 				port: 6379,
 			},
 			defaultJobOptions: {
-				removeOnComplete: 100,
+				removeOnComplete: true,
 				attempts: 1,
 				backoff: {
 					type: 'exponential',
@@ -27,7 +30,7 @@ class BaseJob {
 				}
 			}
 		};
-		this.queueOpts = { ...defaultQueueOptions, ...overrideQueueOptions};
+		this.queueOpts = merge(defaultQueueOptions, overrideQueueOptions);
 	}
 
 	validate() {
