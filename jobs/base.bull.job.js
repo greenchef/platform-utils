@@ -19,7 +19,7 @@ class BaseJob {
 				port: 6379,
 			},
 			defaultJobOptions: {
-				removeOnComplete: true,
+				removeOnComplete: 100,
 				attempts: 1,
 				backoff: {
 					type: 'exponential',
@@ -89,7 +89,6 @@ class BaseJob {
 			this.work(job.data, job, doneWrapper, apmTransaction);
 		});
 		this.queue.resume(); // resume any paused queues when service restarts
-
 	}
 }
 
