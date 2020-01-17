@@ -12,6 +12,11 @@ const extendFactory = (factory, Model) => {
 		}
 	};
 
+	const pickRandomItem = (array) => {
+		const randomIndex = Math.floor(Math.random() * array.length);
+		return array[randomIndex];
+	}
+
 	/**
   * Create multiple records at once
   * @param {number} num - how many to create
@@ -32,7 +37,7 @@ const extendFactory = (factory, Model) => {
 		return fac;
 	};
 
-	Object.assign(factory, { create, createMany, clearAll, requestPayload });
+	Object.assign(factory, { create, createMany, clearAll, pickRandomItem, requestPayload });
 };
 
 module.exports = {
