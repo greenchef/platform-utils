@@ -1,6 +1,6 @@
 {
   "name": "gc-platform-utils",
-  "version": "3.8.0",
+  "version": "3.9.0",
   "description": "A collection of various utilities to be used across the Green Chef ecosystem.",
   "scripts": {
     "test": "jest"
@@ -10,6 +10,7 @@
   "dependencies": {
     "aws-sdk": "2.246.1",
     "basic-auth": "2.0.1",
+    "boom": "7.3.0",
     "bull": "3.11.0",
     "bull-arena": "2.6.4",
     "bunyan": "1.8.12",
@@ -20,12 +21,10 @@
     "sqs-consumer": "5.4.0"
   },
   "peerDependencies": {
-    "boom": "7.x",
     "mongoose": ">= 4.13.17"
   },
   "devDependencies": {
     "aws-sdk-mock": "4.5.0",
-    "boom": "7.3.0",
     "eslint": "6.1.0",
     "eslint-config-airbnb-base": "14.0.0",
     "eslint-plugin-import": "2.18.2",
