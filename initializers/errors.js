@@ -11,6 +11,13 @@ class DomainError extends Error {
 	}
 }
 
+class BadRequestError extends DomainError {
+	constructor(message, query) {
+		super(message);
+		this.data = { message, query };
+	}
+}
+
 class ResourceNotFoundError extends DomainError {
 	constructor(message, query) {
 		super(message);
@@ -35,8 +42,25 @@ class InternalError extends DomainError {
 	}
 }
 
+class UnauthorizedError extends DomainError {
+	constructor(message) {
+		super(message);
+		this.data = { message };
+	}
+}
+
+class ValidationError extends DomainError {
+	constructor(message, payload) {
+		super(message);
+		this.data = { message, payload };
+	}
+}
+
 module.exports = {
+	BadRequestError,
 	FailedDependencyError,
 	InternalError,
 	ResourceNotFoundError,
+	UnauthorizedError,
+	ValidationError,
 };
