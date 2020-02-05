@@ -14,6 +14,12 @@ const joiSimpleDate = () => {
 	return Joi.string().regex(/^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/);
 };
 
+const joiStateAbbreviation = () => {
+	return Joi.string().regex(
+		/^(?:A[KLRZ]|C[AOT]|D[CE]|FL|GA|HI|I[ADLN]|K[SY]|LA|M[ADEINOST]|N[CDEHJMVY]|O[HKR]|P[A]|RI|S[CD]|T[NX]|UT|V[AT]|W[AIVY])$/
+	)
+};
+
 const joiZipCode = () => {
 	return Joi.string().regex(/^\d{5}(-\d{4})?$/);
 };
@@ -38,6 +44,7 @@ module.exports = {
 	joiDollarString,
 	joiMongoId,
 	joiSimpleDate,
+	joiStateAbbreviation,
 	joiZipCode,
 	validate,
 };

@@ -45,5 +45,31 @@ describe('joiUtils', () => {
 			expect(() => Joi.assert('$1,000,000,000.00', schema)).not.toThrow();
 			expect(() => Joi.assert('$0.00', schema)).not.toThrow();
 		});
-	});
+  });
+  
+  describe('joiStateAbbreviation', () => {
+    test('returns a Joi schema', () => {
+			const schema = joiUtils.joiStateAbbreviation();
+			expect(schema.isJoi).toBe(true);
+    });
+    test('error is thrown if schema is tested against invalid values', () => {
+			const schema = joiUtils.joiStateAbbreviation();
+			expect(() => Joi.assert("CM", schema)).toThrow();
+			expect(() => Joi.assert("PR", schema)).toThrow();
+      expect(() => Joi.assert("QQ", schema)).toThrow();
+      expect(() => Joi.assert("ny", schema)).toThrow();
+			expect(() => Joi.assert("Alabama", schema)).toThrow();
+			expect(() => Joi.assert("", schema)).toThrow();
+      expect(() => Joi.assert(12, schema)).toThrow();
+      expect(() => Joi.assert([], schema)).toThrow();
+    });
+    test('error is not thrown if schema is tested against valid values', () => {
+			const schema = joiUtils.joiStateAbbreviation();
+			expect(() => Joi.assert("CO", schema)).not.toThrow();
+			expect(() => Joi.assert("AL", schema)).not.toThrow();
+			expect(() => Joi.assert("KS", schema)).not.toThrow();
+			expect(() => Joi.assert("NY", schema)).not.toThrow();
+			expect(() => Joi.assert("OR", schema)).not.toThrow();
+		});
+  })
 });
