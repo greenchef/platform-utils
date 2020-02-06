@@ -60,6 +60,7 @@ module.exports = {
 	BadRequestError,
 	FailedDependencyError,
 	InternalError,
+
 	ResourceNotFoundError,
 	UnauthorizedError,
 	ValidationError,
