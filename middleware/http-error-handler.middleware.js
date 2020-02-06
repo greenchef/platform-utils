@@ -1,5 +1,5 @@
 const Boom = require('boom');
-const logger = require('./logger');
+const logger = require('../initializers/logger');
 
 const httpErrorHandler = (err, _req, res, _next) => { // eslint-disable-line no-unused-vars
 	let responseErr = err;
