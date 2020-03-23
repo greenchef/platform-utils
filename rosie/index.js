@@ -32,7 +32,25 @@ const extendFactory = (factory, Model) => {
 		return fac;
 	};
 
-	Object.assign(factory, { create, createMany, clearAll, requestPayload });
+	const seed = async (seedName, params) => {
+		const { seeds } = factory.statics;
+		if (seedName === 'all') {
+			return Promise.all(Object.values(seeds).map(seedDefinition => create({ ...seedDefinition, ...params })));
+		}
+		const seedDefinition = seeds[seedName] || {};
+		return create({ ...seedDefinition, ...params });
+	}
+
+	const seedMany = async (seedName, params, num) => {
+		const { seeds } = factory.statics;
+		if (seedName === 'all') {
+			return Promise.all(Object.values(seeds).map(seedDefinition => createMany({ ...seedDefinition, ...params }, num)));
+		}
+		const seedDefinition = seeds[seedName] || {};
+		return createMany({ ...seedDefinition, ...params }, num);
+	}
+
+	Object.assign(factory, { create, createMany, clearAll, requestPayload, seed, seedMany });
 };
 
 module.exports = {
