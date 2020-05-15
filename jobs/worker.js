@@ -1,6 +1,8 @@
 const Arena = require('bull-arena');
 const express = require('express');
-const { logger } = require('../initializers');
+const log = require('../initializers/logger');
+
+const logger = log.gcLogger;
 
 // Needs to be after other initializers for dotenv loading
 const arenaAuth = require('../initializers/arena-auth');
@@ -46,7 +48,7 @@ const register = () => {
 	app.use('/', arenaConfig);
 
 	app.listen(app.get('port'), () => {
-		logger.info('App is running at http://localhost:%d in %s mode', app.get('port'), app.get('env'));
+		logger.info(`App is running at http://localhost:${app.get('port')} in ${app.get('env')} mode`);
 		logger.info('  Press CTRL-C to stop\n');
 	});
 }

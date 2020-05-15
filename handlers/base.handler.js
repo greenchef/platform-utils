@@ -1,7 +1,8 @@
-const logger = require('../initializers/logger');
+const log = require('../initializers/logger');
 
 class BaseHandler {
   constructor(topic, job) {
+  	this.logger = log.gcLogger;
     this.job = job;
     this.topic = process.env.APP_CLUSTER ? `${process.env.APP_CLUSTER}-${topic}` : `local-${topic}`;
   }
@@ -16,7 +17,7 @@ class BaseHandler {
 
   async work(data) {
     if (!this.job) {
-      logger.error('work function not implemented for handler');
+      this.logger.error('work function not implemented for handler');
       throw new Error('work function not implemented for handler');
     }
   }

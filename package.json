@@ -1,6 +1,6 @@
 {
   "name": "gc-platform-utils",
-  "version": "3.14.0",
+  "version": "3.15.0",
   "description": "A collection of various utilities to be used across the Green Chef ecosystem.",
   "scripts": {
     "test": "jest"
@@ -20,7 +20,8 @@
     "jsonwebtoken": "8.3.0",
     "lodash": "^4.17.15",
     "merge-deep": "^3.0.2",
-    "sqs-consumer": "5.4.0"
+    "sqs-consumer": "5.4.0",
+    "stacktrace-js": "^2.0.2"
   },
   "peerDependencies": {
     "mongoose": ">= 4.13.17"
