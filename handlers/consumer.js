@@ -5,9 +5,10 @@ AWS.config.update({ region: 'us-west-2' });
 const SNS = new AWS.SNS({ apiVersion: '2010-03-31', endpoint: process.env.SNS_ENDPOINT });
 const SQS = new AWS.SQS({ apiVersion: '2012-11-05', endpoint: process.env.SQS_ENDPOINT });
 
-const logger = require('../initializers/logger');
+const log = require('../initializers/logger');
 
 const handlers = {};
+const logger = log.gcLogger;
 
 class BaseConsumer {
   static async run(queueUrl, options = {}) {
@@ -30,7 +31,7 @@ class BaseConsumer {
               if (job) {
                 await job.enqueue(payload);
               } else {
-                logger.error(`job not found for topic ${messageTopic}`);
+              	logger.error(`job not found for topic ${messageTopic}`);
                 throw new Error(`job not found for topic ${messageTopic}`);
               }
             } else if (handler) {
@@ -41,17 +42,17 @@ class BaseConsumer {
             }
           }
         } catch (error) {
-          logger.error(`error from [handleMessage] for Consumer: ${error.stack}`)
+          logger.error(error, { group: 'Consumer', subGroup: 'handleMessage' })
           throw error;
         }
       },
     });
     consumer.on('error', (err) => {
-      logger.error(`Error from Consumer: ${err.message}`);
+		logger.error(err, { group: 'Consumer' });
     });
 
     consumer.on('processing_error', (err) => {
-      logger.error(`Processing error from Consumer: ${err.message}`);
+		logger.error(err, { group: 'Consumer', subGroup: 'Processing' });
     });
 
     consumer.start();
@@ -146,12 +147,12 @@ class BaseConsumer {
 
       this.run(queueUrl, options);
     } catch (error) {
-      logger.error(`Error connecting consumer: ${error.stack}`);
+		logger.error(error, { supplementalMessage: `Error connecting consumer` });
     }
   }
 
   static registerHandler(name, Clazz) {
-    if (Clazz) { 
+    if (Clazz) {
       if (handlers[name]) {
         throw new Error('would overwrite existing model');
       } else {

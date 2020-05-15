@@ -6,15 +6,15 @@ require('./dotenv'); // must be first
 const apm = require('./elastic-apm'); // This should always immediately follow dotenv load.
 const errors = require('./errors');
 const joi = require('./joi');
-const logger = require('./logger');
-const mongoose = require('./mongoose');
+const log = require('./logger');
 const utils = require('./utils');
+const mongoose = require('./mongoose');
 
 module.exports = {
 	apm,
 	errors,
 	joi,
-	logger,
+	log,
 	mongoose,
 	utils,
 };

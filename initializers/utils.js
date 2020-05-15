@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const logger = require('./logger');
+const { gcLogger: logger } = require('./logger');
 
 const createMongooseConnection = connectionString => {
 	mongoose.Promise = global.Promise;
@@ -14,7 +14,7 @@ const createMongooseConnection = connectionString => {
 
 			return mongoose.connect(connectionString, options, (err) => {
 				if (err) {
-					logger.error('Failed to connect to mongo on startup - retrying in 5 sec', err);
+					logger.error(err, { supplementalMessage: 'Failed to connect to mongo on startup - retrying in 5 sec' });
 					setTimeout(connectWithRetry, 5000);
 				} else {
 					logger.info('mongoose connected!!!!');
@@ -23,7 +23,7 @@ const createMongooseConnection = connectionString => {
 		};
 		connectWithRetry();
 	} catch (e) {
-		logger.error('unable to connect to mongoose: %s', e.stack);
+		logger.error(e, { supplementalMessage: 'unable to connect to mongoose: %s' });
 		process.exit(1);
 	}
 	return mongoose;

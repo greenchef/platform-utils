@@ -1,16 +1,16 @@
-const Joi = require('gc-platform-utils/initializers/joi');
+const Joi = require('../initializers/joi');
 // Load the AWS SDK for Node.js
 const AWS = require('aws-sdk');
 // Set region
 AWS.config.update({ region: 'us-west-2' });
 const SNS = new AWS.SNS({ apiVersion: '2010-03-31', endpoint: process.env.SNS_ENDPOINT });
 
-const logger = require('../initializers/logger');
+const log = require('../initializers/logger');
 
 class BasePublisher {
   constructor(topic, schema) {
     if (!topic) throw new Error('Topic name is required');
-    this.logger = logger;
+    this.logger = log.gcLogger;
     this.ready = false;
     this.schema = schema;
     this.topic = process.env.APP_CLUSTER ? `${process.env.APP_CLUSTER}-${topic}` : `local-${topic}`;
@@ -42,7 +42,7 @@ class BasePublisher {
       const snsResponse = await publisher;
       return snsResponse;
     } catch (err) {
-      logger.error(`Error publishing message for topic ${this.topic}: Error: ${err}`);
+      this.logger.error(err, { supplementalMessage: `Error publishing message for topic ${this.topic}` });
       throw err;
     }
   }
@@ -51,9 +51,8 @@ class BasePublisher {
     try {
       const snsCreateResponse = await SNS.createTopic({ Name: this.topic }).promise();
       this.topicArn = snsCreateResponse.TopicArn;
-      return
     } catch (err) {
-      logger.error(`Error creating topic ${this.topic}: Error: ${err}`);
+      this.logger.error(err, { supplementalMessage: `Error creating topic ${this.topic}` });
       throw err;
     }
   }

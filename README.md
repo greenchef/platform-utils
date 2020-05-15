@@ -8,7 +8,7 @@ Install as a github npm module, and import like so:
 ```
 // For all initializers to be run...
 require('platform-utils/initializers');
-const { logger } = require('platform-utils/initializers/logger');
+const { gcLogger } = require('platform-utils/initializers/logger');
 
 // For a particular initializer without running them all
 const joi = require('platform-utils/initializers/joi');

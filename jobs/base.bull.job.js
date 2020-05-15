@@ -1,17 +1,15 @@
 const Joi = require('../initializers/joi');
 const Queue = require('bull');
 const apm = require('../initializers/elastic-apm');
-const logger = require('../initializers/logger');
+const log = require('../initializers/logger');
 const merge = require('merge-deep');
-
-
 
 class BaseJob {
 	constructor(queueName, concurrency = 1, overrideQueueOptions = {}) {
 		if (!queueName) throw new Error('Queue name is required');
 		this.queue = null;
 		this.Joi = Joi;
-		this.logger = logger;
+		this.logger = log.gcLogger;
 		this.queueName = queueName;
 		this.concurrency = concurrency;
 		const defaultQueueOptions = {
