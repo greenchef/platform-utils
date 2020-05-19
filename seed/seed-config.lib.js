@@ -20,7 +20,7 @@ const copyData = async (sourceConnection, collectionName, model, query = {}, opt
 
 	if (shouldInsertIndividually) {
 		await documentCursor.forEach(async document => {
-			await model.collection.insert(document);
+			await model.collection.insertOne(document);
 		})
 	} else {
 		const documents = await documentCursor.toArray();
