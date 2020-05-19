@@ -26,11 +26,9 @@ const copyData = async (sourceConnection, collectionName, model, query = {}, opt
 		const documents = await documentCursor.toArray();
 		await model.collection.insertMany(documents);
 		if (shouldPublish) {
-			//can change when source db isn't stag-two
 			await publishData(collectionName, documents, SOURCE_DB_NAME)
 		}
 	}
-
 	await sourceClient.close();
 };
 
