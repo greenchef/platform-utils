@@ -18,6 +18,13 @@ class BadRequestError extends DomainError {
 	}
 }
 
+class ConflictError extends DomainError {
+	constructor(message, query) {
+		super(message);
+		this.data = { message, query };
+	}
+}
+
 class ResourceNotFoundError extends DomainError {
 	constructor(message, query) {
 		super(message);
@@ -57,7 +64,8 @@ class ValidationError extends DomainError {
 }
 
 module.exports = {
-	BadRequestError,
+  BadRequestError,
+  ConflictError,
 	FailedDependencyError,
 	InternalError,
 
