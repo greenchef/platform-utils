@@ -15,14 +15,16 @@ approvals:
       minimum: 2
       from:
         users:
+          - aprakash-gc
           - bearfact
-          - bradpickensdesign
+          - Brady-Conn
           - BriannaGreene
+          - cat-plevak
           - cnb3
           - EdgarCordova
+          - jan-mcsparin
+          - m0jeda
           - mrandyclark
           - siennamw
+          - svet93
           - tom-con
-          - cat-plevak
-          - Brady-Conn
-          - jan-mcsparin
