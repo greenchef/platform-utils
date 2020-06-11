@@ -9,6 +9,11 @@ const joiMongoId = () => {
 	return Joi.string().regex(/^[a-f\d]{24}$/i);
 };
 
+// A date string with time and time zone: YYYY-MM-DD h:mm A z
+const joiDateTime = () => {
+	return Joi.string().regex(/^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]) ([1-9]|1[012]):[0-5][0-9] (AM|PM) ([ECMP][DS]T)$/);
+};
+
 // A yyyy-dd-mm date string
 const joiSimpleDate = () => {
 	return Joi.string().regex(/^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/);
@@ -41,6 +46,7 @@ const defaultSearchSchema = {
 
 module.exports = {
 	defaultSearchSchema,
+	joiDateTime,
 	joiDollarString,
 	joiMongoId,
 	joiSimpleDate,
