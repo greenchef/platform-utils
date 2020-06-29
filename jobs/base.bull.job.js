@@ -43,6 +43,7 @@ class BaseJob {
 			job = await this.queue.add(data, jobOptions);
 		} catch (err) {
 			this.logger.error(err);
+			throw err;
 		}
 		return job;
 	}
