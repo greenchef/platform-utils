@@ -1,5 +1,6 @@
 const bunyan = require('bunyan');
 const stackTrace = require('stacktrace-js');
+require('./dotenv');
 
 const DEFAULT_OPTIONS = {
 	name: process.env.LOGGER_NAME,
@@ -90,7 +91,7 @@ const createLogger = options => {
 		...options
 	  };
 
-	if(!resolvedOptions.name) {
+	if (!resolvedOptions.name) {
 		throw Error('Logger name not provided for logger initializer.');
 	}
 
