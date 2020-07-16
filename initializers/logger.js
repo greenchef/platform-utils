@@ -3,7 +3,7 @@ const stackTrace = require('stacktrace-js');
 
 const DEFAULT_OPTIONS = {
 	name: process.env.LOGGER_NAME,
-	level: process.env.LOG_LEVEL || 'debug',
+	level: process.env.DISABLE_LOGS_FOR_TESTS ? bunyan.FATAL + 1 : (process.env.LOG_LEVEL || 'debug'),
 	src: true,
 	serializers: bunyan.stdSerializers,
 	stream: process.stdout,
