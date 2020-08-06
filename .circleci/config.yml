@@ -16,6 +16,6 @@ jobs:
           paths:
             - node_modules
       # Create a .env file
-      - run: cp .env-example .env
+      - run: cp example.env .env
       # Run tests
       - run: npm test

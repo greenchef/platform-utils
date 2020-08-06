@@ -1,6 +1,6 @@
 const Arena = require('bull-arena');
 const express = require('express');
-const log = require('../initializers/logger');
+const { log } = require('../initializers');
 
 const logger = log.gcLogger;
 

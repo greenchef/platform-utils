@@ -1,5 +1,5 @@
 const Boom = require('boom');
-const log = require('../initializers/logger');
+const { log } = require('../initializers');
 
 const logger = log.gcLogger;
 
