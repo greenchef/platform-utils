@@ -5,7 +5,7 @@ AWS.config.update({ region: 'us-west-2' });
 const SNS = new AWS.SNS({ apiVersion: '2010-03-31', endpoint: process.env.SNS_ENDPOINT });
 const SQS = new AWS.SQS({ apiVersion: '2012-11-05', endpoint: process.env.SQS_ENDPOINT });
 
-const log = require('../initializers/logger');
+const { log } = require('../initializers');
 
 const handlers = {};
 const logger = log.gcLogger;
@@ -60,7 +60,7 @@ class BaseConsumer {
 
   static async connect(options = {}) {
     try {
-      const queue = (process.env.APP_CLUSTER && process.env.APP_SERVICE) ? `${process.env.APP_CLUSTER}-${process.env.APP_SERVICE}-messages` : `local-${process.pid}-messages`;
+      const queue = (process.env.APP_CLUSTER && process.env.APP_CONSUMER_NAME) ? `${process.env.APP_CLUSTER}-${process.env.APP_CONSUMER_NAME}-messages` : `local-${process.pid}-messages`;
 
       const createOrFetchTopic = (topic) => {
         return SNS.createTopic({ Name: topic }).promise();

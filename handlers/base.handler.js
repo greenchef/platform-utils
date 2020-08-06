@@ -1,4 +1,4 @@
-const log = require('../initializers/logger');
+const { log } = require('../initializers');
 
 class BaseHandler {
   constructor(topic, job) {
