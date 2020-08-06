@@ -1,11 +1,10 @@
-const Joi = require('../initializers/joi');
 // Load the AWS SDK for Node.js
 const AWS = require('aws-sdk');
 // Set region
 AWS.config.update({ region: 'us-west-2' });
 const SNS = new AWS.SNS({ apiVersion: '2010-03-31', endpoint: process.env.SNS_ENDPOINT });
 
-const log = require('../initializers/logger');
+const { joi: Joi, log } = require('../initializers');
 
 class BasePublisher {
   constructor(topic, schema) {
