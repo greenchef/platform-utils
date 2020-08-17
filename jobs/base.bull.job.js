@@ -1,13 +1,13 @@
 const Queue = require('bull');
 const merge = require('merge-deep');
 
-const { joi, apm, log } = require('../initializers');
+const { joi: Joi, apm, log } = require('../initializers');
 
 class BaseJob {
 	constructor(queueName, concurrency = 1, overrideQueueOptions = {}) {
 		if (!queueName) throw new Error('Queue name is required');
 		this.queue = null;
-		this.Joi = joi;
+		this.Joi = Joi;
 		this.logger = log.gcLogger;
 		this.queueName = queueName;
 		this.concurrency = concurrency;
