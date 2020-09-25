@@ -16,8 +16,6 @@ const httpErrorHandler = (err, _req, res, _next) => { // eslint-disable-line no-
 			responseErr = Boom.badRequest(responseErr.message);
 		} else if (responseErr.name === 'UnauthorizedError') {
 			responseErr = Boom.unauthorized(responseErr.message);
-		} else if (responseErr.name === 'TypeError') {
-			responseErr = Boom.failedDependency(responseErr.message);
 		} else {
 			responseErr = Boom.boomify(new Error(responseErr), { statusCode: responseErr.status });
 		}
