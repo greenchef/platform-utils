@@ -68,19 +68,24 @@ const mongooseExtendOptions = (Schema) => {
 
 		// Set option defaults
 		if (options.limit == null) options.limit = LIMIT;
-		if (options.populate == null) options.populate = POPULATE;
-		if (options.projection == null) options.projection = PROJECTION;
 		if (options.skip == null) options.skip = SKIP;
-		if (options.sortOrder == null) options.sortOrder = SORT_ORDER;
-		if (options.sortProperty == null) options.sortProperty = SORT_PROPERTY;
 
 		// Alter query from options
 		if (options.limit !== 0) {
 			query = query.skip(Number(options.skip)).limit(Number(options.limit));
 		}
-		query = query.populate(options.populate);
-		query = query.select(options.projection);
-		query = query.sort({ [options.sortProperty]: options.sortOrder });
+
+		if (options.populate) {
+			query = query.populate(options.populate);
+		}
+
+		if (options.projection) {
+			query = query.select(options.projection);
+		}
+
+		if (options.sortProperty) {
+			query = query.sort({ [options.sortProperty]: options.sortOrder || SORT_ORDER });
+		}
 
 		return query;
 	};
