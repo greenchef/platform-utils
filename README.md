@@ -45,3 +45,6 @@ MONGO_URI
 # Optional
 ARENA_PASSWORD # If your application uses Bull Arena
 ```
+
+## What the heck's the GC Logger anyways??
+Read all about it [here](https://greenchef.atlassian.net/wiki/spaces/GCE/pages/753139713/GC+Logger)
