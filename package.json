@@ -9,6 +9,7 @@
   "license": "ISC",
   "dependencies": {
     "aws-sdk": "2.246.1",
+    "axios": "0.20.0",
     "basic-auth": "2.0.1",
     "boom": "7.3.0",
     "bull": "3.11.0",
@@ -21,6 +22,7 @@
     "latinize": "^0.4.1",
     "lodash": "^4.17.15",
     "merge-deep": "^3.0.2",
+    "request-promise": "4.2.2",
     "sqs-consumer": "5.4.0",
     "stacktrace-js": "^2.0.2"
   },
