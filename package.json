@@ -21,6 +21,7 @@
     "latinize": "^0.4.1",
     "lodash": "^4.17.15",
     "merge-deep": "^3.0.2",
+    "moment": "^2.29.1",
     "sqs-consumer": "5.4.0",
     "stacktrace-js": "^2.0.2"
   },

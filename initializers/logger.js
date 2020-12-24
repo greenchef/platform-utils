@@ -1,5 +1,6 @@
 const bunyan = require('bunyan');
 const stackTrace = require('stacktrace-js');
+const moment = require('moment');
 
 const DEFAULT_OPTIONS = {
 	name: process.env.LOGGER_NAME,
@@ -49,6 +50,8 @@ const createGcLogger = logger => ({
 				group = group || `${file}:${line}:${col}`;
 				subGroup = subGroup || func;
 			}
+
+			message = `[${moment().format()}][${level.toUpperCase()}] ${message}`;
 
 			return logger[level]({
 				err,
