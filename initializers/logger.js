@@ -32,7 +32,7 @@ const createGcLogger = logger => ({
 
 			if(typeof first === 'string') {
 				message = first;
-			} else if (first instanceof Error) {
+			} else if (first && first.message) {
 				err = first;
 				message = data.supplementalMessage || err.message;
 			} else {
