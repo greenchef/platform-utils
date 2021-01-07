@@ -14,6 +14,8 @@
     "bull": "3.11.0",
     "bull-arena": "2.6.4",
     "bunyan": "1.8.12",
+    "convict": "^6.0.0",
+    "convict-format-with-validator": "^6.0.0",
     "dotenv": "6.1.0",
     "elastic-apm-node": "2.16.2",
     "joi": "13.7.0",
