@@ -23,8 +23,11 @@ class BaseJob {
 				attempts: 1,
 				backoff: {
 					type: 'exponential',
-					delay: 30000
+					delay: 30000,
 				}
+			},
+			settings: {
+				maxStalledCount: 0,
 			}
 		};
 		this.queueOpts = merge(defaultQueueOptions, overrideQueueOptions);
@@ -72,14 +75,6 @@ class BaseJob {
 	}
 
 	startWorker() {
-		this.queue.on('failed', function(job, err){
-			// A job failed with reason `err`!
-			apm.captureError(err);
-		})
-		this.queue.on('error', function(err){
-			// A job failed with reason `err`!
-			apm.captureError(err);
-		})
 		this.queue.process(this.concurrency, async (job, done) => {
 			const apmTransaction = apm.startTransaction(this.constructor.name, 'job');
 			const doneWrapper = (err) => {
@@ -90,6 +85,30 @@ class BaseJob {
 			this.work(job.data, job, doneWrapper, apmTransaction);
 		});
 		this.queue.resume(); // resume any paused queues when service restarts
+		this.addListeners();
+	}
+
+	addListeners() {
+		this.queue.on('stalled', (job) => {
+			this.logger.error(`[${this.constructor.name}: Stalled], Job: ${JSON.stringify(job)}`);
+		});
+
+		this.queue.on('global:stalled', (job) => {
+			this.logger.error(`[${this.constructor.name}: Global Stalled], Job: ${JSON.stringify(job)}`);
+		});
+
+		this.queue.on('failed', (job, error) => {
+			this.logger.error(`[${this.constructor.name}: Failed] - ${error}, Job: ${JSON.stringify(job)}`);
+			apm.captureError(error);
+		});
+		this.queue.on('global:failed', (job, error) => {
+			this.logger.error(`[Base Bull Job: Global Failed] - ${error}, Job: ${JSON.stringify(job)}`);
+			apm.captureError(error);
+		});
+		this.queue.on('error', (error) => {
+			this.logger.error(`[${this.constructor.name}: Error] - ${error}`);
+			apm.captureError(error);
+		});
 	}
 }
 
