@@ -1,9 +1,12 @@
 const AWS = require('aws-sdk');
 const { Consumer } = require('sqs-consumer');
 
+const { cluster } = process.convict.get('application');
+const { consumerGroup, snsEndpoint, sqsEndpoint } = process.convict.get('messageBus');
+
 AWS.config.update({ region: 'us-west-2' });
-const SNS = new AWS.SNS({ apiVersion: '2010-03-31', endpoint: process.env.SNS_ENDPOINT });
-const SQS = new AWS.SQS({ apiVersion: '2012-11-05', endpoint: process.env.SQS_ENDPOINT });
+const SNS = new AWS.SNS({ apiVersion: '2010-03-31', endpoint: snsEndpoint });
+const SQS = new AWS.SQS({ apiVersion: '2012-11-05', endpoint: sqsEndpoint });
 
 const { log } = require('../initializers');
 
@@ -60,7 +63,7 @@ class BaseConsumer {
 
 	static async connect(options = {}) {
 		try {
-			const queue = (process.env.APP_CLUSTER && process.env.MESSAGE_BUS_CONSUMER_GROUP) ? `${process.env.APP_CLUSTER}-${process.env.MESSAGE_BUS_CONSUMER_GROUP}-message-bus` : `local-${process.pid}-message-bus`;
+			const queue = (cluster && consumerGroup) ? `${cluster}-${consumerGroup}-message-bus` : `local-${process.pid}-message-bus`;
 
 			const createOrFetchTopic = (topic) => {
 				return SNS.createTopic({ Name: topic }).promise();

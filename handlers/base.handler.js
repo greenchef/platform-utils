@@ -1,10 +1,12 @@
 const { log } = require('../initializers');
 
+const { cluster } = process.convict.get('application');
+
 class BaseHandler {
   constructor(topic, job) {
   	this.logger = log.gcLogger;
     this.job = job;
-    this.topic = process.env.APP_CLUSTER ? `${process.env.APP_CLUSTER}-${topic}` : `local-${topic}`;
+    this.topic = cluster ? `${cluster}-${topic}` : `local-${topic}`;
   }
 
   getTopic() {

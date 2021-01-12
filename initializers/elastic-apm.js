@@ -2,19 +2,19 @@
 // If the env is configured to use apm
 const apm = require('elastic-apm-node');
 
+const { secret, url } = process.convict.get('apm');
+const { cluster, environment, service } = process.convict.get('app');
+const { level } = process.convict.get('logger');
+
 apm.start({
-	active: (process.env.APP_CLUSTER && process.env.APP_SERVICE && process.env.APM_SECRET && process.env.APM_URL) ? true : false,
-	environment: process.env.APP_ENVIRONMENT || 'staging',
-	logLevel: process.env.LOG_LEVEL || 'error',
+	active: cluster && service && secret && url,
+	environment: environment || 'staging',
+	logLevel: level || 'error',
 	// Override service name from package.json
 	// Allowed characters: a-z, A-Z, 0-9, -, _, and space
-	serviceName: `${process.env.APP_CLUSTER}-${process.env.APP_SERVICE}`,
-
-	// Use if APM Server requires a token
-	secretToken: process.env.APM_SECRET,
-
-	// Set custom APM Server URL (default: http://localhost:8200)
-	serverUrl: process.env.APM_URL,
+	serviceName: `${cluster}-${service}`,
+	secretToken: secret, // Use if APM Server requires a token
+	serverUrl: url, // Set custom APM Server URL (default: http://localhost:8200)
 })
 
 

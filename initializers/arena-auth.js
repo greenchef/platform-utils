@@ -1,12 +1,12 @@
 const auth = require('basic-auth');
 
-if (!process.env.ARENA_PASSWORD) {
-	throw Error('ARENA_PASSWORD environment variable not provided for arena-auth initializer.')
-}
+const password = process.convict.get('arena.password');
+
+if (!password) throw Error('ARENA_PASSWORD environment variable not provided for arena-auth initializer.');
 
 // Map of user.name and user.password
 const admins = {
-	admin: { password: `${process.env.ARENA_PASSWORD}` },
+	admin: { password: `${password}` },
 };
 
 module.exports = (req, res, next) => {

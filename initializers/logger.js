@@ -1,9 +1,11 @@
 const bunyan = require('bunyan');
 const stackTrace = require('stacktrace-js');
 
+const { level, name } = process.convict.get('logger');
+
 const DEFAULT_OPTIONS = {
-	name: process.env.LOGGER_NAME,
-	level: process.env.LOG_LEVEL || 'debug',
+	name,
+	level,
 	src: true,
 	serializers: bunyan.stdSerializers,
 	stream: process.stdout,
@@ -26,11 +28,11 @@ const createGcLogger = logger => ({
 		return new Proxy(child, handler);
 	},
 	log: level => function() {
-		if(arguments.length) {
+		if (arguments.length) {
 			const [first, data = {}, meta = {}] = arguments;
 			let message, err;
 
-			if(typeof first === 'string') {
+			if (typeof first === 'string') {
 				message = first;
 			} else if (first && first.message) {
 				err = first;
@@ -43,7 +45,7 @@ const createGcLogger = logger => ({
 			let subGroup = data.subGroup;
 
 			let stack;
-			if(level === 'fatal' || level === 'error') {
+			if (level === 'fatal' || level === 'error') {
 				stack = getStack().slice(2);
 				const { func, file, line, col } = stack[0];
 				group = group || `${file}:${line}:${col}`;
@@ -69,13 +71,9 @@ const createHandler = logger => {
 
 	const handler = {
 		get: (target, name) => {
-			if (Object.keys(gcLogger).includes(name)) {
-				return gcLogger[name];
-			}
+			if (Object.keys(gcLogger).includes(name)) return gcLogger[name];
 
-			if (LEVELS.includes(name)) {
-				return gcLogger.log(name);
-			}
+			if (LEVELS.includes(name)) return gcLogger.log(name);
 
 			return target[name];
 		}
@@ -90,9 +88,7 @@ const createLogger = options => {
 		...options
 	  };
 
-	if(!resolvedOptions.name) {
-		throw Error('Logger name not provided for logger initializer.');
-	}
+	if (!resolvedOptions.name) throw Error('Logger name not provided for logger initializer.');
 
 	const logger = bunyan.createLogger(resolvedOptions);
 	const handler = createHandler(logger);

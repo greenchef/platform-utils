@@ -2,12 +2,14 @@ const Arena = require('bull-arena');
 const express = require('express');
 const { log } = require('../initializers');
 
-const logger = log.gcLogger;
-
-// Needs to be after other initializers for dotenv loading
 const arenaAuth = require('../initializers/arena-auth');
 
 const jobs = require('./models');
+
+const logger = log.gcLogger;
+const { cluster, port } = process.convict.get('application');
+const { bullDb, host, port: redisPort } = process.convict.get('redis');
+
 
 const register = () => {
 	const arenaQueues = [];
@@ -17,11 +19,11 @@ const register = () => {
 		arenaQueues.push({
 			hostId: 'gc',
 			name: jobs.model(name).queueName,
-			prefix: process.env.APP_CLUSTER || 'bull',
+			prefix: cluster || 'bull',
 			redis: {
-				db: parseInt(process.env.REDIS_BULL_DB) || 12,
-				host: `${process.env.REDIS_HOST}`,
-				port: parseInt(process.env.REDIS_PORT) || 6379,
+				db: parseInt(bullDb) || 12,
+				host,
+				port: redisPort,
 			}
 		});
 	});
@@ -42,7 +44,7 @@ const register = () => {
 
 	// set app constants
 	app.set('host', '127.0.0.1');
-	app.set('port', parseInt(process.env.ARENA_PORT) || 4000);
+	app.set('port', port);
 
 	app.use(arenaAuth);
 	app.use('/', arenaConfig);

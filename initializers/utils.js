@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 const { gcLogger: logger } = require('./logger');
 
+const { connectionString, name, options, uri } = process.convict.get('mongoDb');
+
 const createMongooseConnection = connectionString => {
 	mongoose.Promise = global.Promise;
 	try {
@@ -30,13 +32,11 @@ const createMongooseConnection = connectionString => {
 }
 
 const getMongoConnectionString = () => {
-	if (!(process.env.MONGODB_URI || process.env.MONGO_URI)) {
+	if (!(uri || connectionString)) {
 		throw Error('No mongo connection string detected! One of (MONGO_URI, [MONGODB_URI, MONGODB_NAME, MONGODB_OPTIONS]) must be provided.');
 	}
 
-	return process.env.MONGODB_URI
-		? `${process.env.MONGODB_URI}/${process.env.MONGODB_NAME}${process.env.MONGODB_OPTIONS}`
-		: process.env.MONGO_URI;
+	return uri ? `${uri}/${name}${options}` : connectionString;
 }
 
 const isProdDB = () => {

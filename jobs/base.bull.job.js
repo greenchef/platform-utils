@@ -1,7 +1,11 @@
 const Queue = require('bull');
 const merge = require('merge-deep');
 
+
 const { joi: Joi, apm, log } = require('../initializers');
+
+const { cluster } = process.convict.get('application');
+const { bullDb, host, port } = process.convict.get('redis');
 
 class BaseJob {
 	constructor(queueName, concurrency = 1, overrideQueueOptions = {}) {
@@ -12,11 +16,11 @@ class BaseJob {
 		this.queueName = queueName;
 		this.concurrency = concurrency;
 		const defaultQueueOptions = {
-			prefix: process.env.APP_CLUSTER || 'bull',
+			prefix: cluster || 'bull',
 			redis: {
-				db: parseInt(process.env.REDIS_BULL_DB) || 1,
-				host: process.env.REDIS_HOST,
-				port: 6379,
+				db: parseInt(bullDb) || 1,
+				host,
+				port,
 			},
 			defaultJobOptions: {
 				removeOnComplete: true,
