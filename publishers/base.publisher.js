@@ -1,8 +1,10 @@
-// Load the AWS SDK for Node.js
 const AWS = require('aws-sdk');
-// Set region
-AWS.config.update({ region: 'us-west-2' });
-const SNS = new AWS.SNS({ apiVersion: '2010-03-31', endpoint: process.env.SNS_ENDPOINT });
+AWS.config.update({ region: 'us-west-2' }); // Set region
+
+const { cluster } = process.convict.get('application');
+const { snsEndpoint } = process.convict.get('messageBus');
+
+const SNS = new AWS.SNS({ apiVersion: '2010-03-31', endpoint: snsEndpoint });
 
 const { joi: Joi, log } = require('../initializers');
 
@@ -12,7 +14,7 @@ class BasePublisher {
     this.logger = log.gcLogger;
     this.ready = false;
     this.schema = schema;
-    this.topic = process.env.APP_CLUSTER ? `${process.env.APP_CLUSTER}-${topic}` : `local-${topic}`;
+    this.topic = cluster ? `${cluster}-${topic}` : `local-${topic}`;
     this.topicArn = null;
   }
 

@@ -1,3 +1,7 @@
+const convict = require('convict');
+
+// TODO: Fix tests to account for convict
+
 describe('getMongoConnectionString', () => {
 	test('should use MONGODB_URI env var if available', () => {
 		expect.assertions(1);
