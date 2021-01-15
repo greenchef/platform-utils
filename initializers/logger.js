@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 const bunyan = require('bunyan');
 const stackTrace = require('stacktrace-js');
 
@@ -25,17 +26,21 @@ const createGcLogger = logger => ({
 
 		return new Proxy(child, handler);
 	},
-	log: level => function() {
-		if(arguments.length) {
+	// this nested function is left as a un-named function so we have access to the arguments object
+	log: level => function () {
+		if (arguments.length) {
 			const [first, data = {}, meta = {}] = arguments;
-			let message, err;
+			let message;
+			let err;
 
-			if(typeof first === 'string') {
+			if (typeof first === 'string') {
 				message = first;
 			} else if (first && first.message) {
 				err = first;
 				if (err.response && err.response.data) {
-					message = `${err.response.data}`
+					message = JSON.stringify(err.response.data)
+				} else if (err.response && err.response.body) {
+					message = `${err.response.statusMessage} ${err.response.body}`
 				} else {
 					message = data.supplementalMessage ? err.message + data.supplementalMessage : err.message;
 				}
@@ -47,7 +52,7 @@ const createGcLogger = logger => ({
 			let subGroup = data.subGroup;
 
 			let stack;
-			if(level === 'fatal' || level === 'error') {
+			if (level === 'fatal' || level === 'error') {
 				stack = getStack().slice(2);
 				const { func, file, line, col } = stack[0];
 				group = group || `${file}:${line}:${col}`;
@@ -62,9 +67,8 @@ const createGcLogger = logger => ({
 				subGroup,
 				stack,
 			}, message);
-		} else {
-			return logger[level]();
 		}
+		return logger[level]();
 	},
 });
 
