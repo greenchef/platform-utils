@@ -36,14 +36,14 @@ const createGcLogger = logger => ({
 			if (typeof first === 'string') {
 				message = first;
 			} else if (first && first.message) {
+				let resData;
 				err = first;
 				if (err.response && err.response.data) {
-					message = JSON.stringify(err.response.data)
+					resData = JSON.stringify(err.response.data)
 				} else if (err.response && err.response.body) {
-					message = `${err.response.statusMessage} ${err.response.body}`
-				} else {
-					message = data.supplementalMessage ? err.message + data.supplementalMessage : err.message;
+					resData = `${err.response.statusMessage} ${err.response.body}`
 				}
+				message = `${data.supplementalMessage} ${resData}`;
 			} else {
 				throw Error("First argument to log methods must be an Error or 'string' message");
 			}
