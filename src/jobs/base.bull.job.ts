@@ -1,12 +1,18 @@
-const Queue = require('bull');
-const merge = require('merge-deep');
+import Queue, { QueueOptions } from 'bull';
+import merge from 'merge-deep';
 
 const { joi: Joi, apm, log } = require('../initializers');
 
-class BaseJob {
-	constructor(queueName, concurrency = 1, overrideQueueOptions = {}) {
+export class BaseJob {
+	protected queue: Queue.Queue;
+	protected Joi: any;
+	protected logger: any;
+	protected queueName: string;
+	protected concurrency: number;
+	protected queueOpts: QueueOptions;
+
+	constructor(queueName: string, concurrency: number = 1, overrideQueueOptions = {}) {
 		if (!queueName) throw new Error('Queue name is required');
-		this.queue = null;
 		this.Joi = Joi;
 		this.logger = log.gcLogger;
 		this.queueName = queueName;
@@ -14,7 +20,7 @@ class BaseJob {
 		const defaultQueueOptions = {
 			prefix: process.env.APP_CLUSTER || 'bull',
 			redis: {
-				db: parseInt(process.env.REDIS_BULL_DB) || 1,
+				db: process.env.REDIS_BULL_DB ? parseInt(process.env.REDIS_BULL_DB) : 1,
 				host: process.env.REDIS_HOST,
 				port: 6379,
 			},
@@ -33,7 +39,7 @@ class BaseJob {
 		this.queueOpts = merge(defaultQueueOptions, overrideQueueOptions);
 	}
 
-	validate() {
+	validate(_data: any) {
 		return null;
 	}
 
@@ -50,9 +56,9 @@ class BaseJob {
 		return job;
 	}
 
-	work(data, done) {
+	work(_data: any, _job: any, done: (err: any) => any, _apmTransaction: any) {
 		this.logger.error(`work method for ${this.queueName} is not implemented`);
-		done();
+		done(null);
 	}
 
 	connect() {
@@ -77,7 +83,7 @@ class BaseJob {
 	startWorker() {
 		this.queue.process(this.concurrency, async (job, done) => {
 			const apmTransaction = apm.startTransaction(this.constructor.name, 'job');
-			const doneWrapper = (err) => {
+			const doneWrapper = (err: any) => {
 				apmTransaction.result = err ? 'error' : 'success'
 				apmTransaction.end();
 				done(err);
@@ -111,5 +117,3 @@ class BaseJob {
 		});
 	}
 }
-
-module.exports = BaseJob;

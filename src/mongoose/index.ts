@@ -1,3 +1,7 @@
+import mongoose, { Document, Schema } from 'mongoose';
+
+const ObjectId = mongoose.Types.ObjectId;
+
 const LIMIT = 50;
 const POPULATE = '';
 const PROJECTION = '';
@@ -6,11 +10,12 @@ const SORT_ORDER = 1;
 const SORT_PROPERTY = '_id';
 
 // This handles ensuring we have ids for nested objects as well
-const replaceIdsWithStrings = (ret) => {
+const replaceIdsWithStrings = (ret: any) => {
 	if (!ret) return;
 	Object.entries(ret).forEach(([key, value]) => {
 		if (key === '_id') {
-			ret.id = value.toString();
+			let castValue = value as typeof ObjectId;
+			ret.id = castValue.toString();
 			// delete ret._id;
 		} else if (typeof value === 'object') {
 			replaceIdsWithStrings(value);
@@ -20,8 +25,10 @@ const replaceIdsWithStrings = (ret) => {
 	});
 };
 
-const mongooseTransformDocument = (doc, ret) => {
+export const mongooseTransformDocument = (doc: Document, ret: any) => {
+	//@ts-ignore
 	const hiddenFields = doc.schema.options.hide;
+	//@ts-ignore
 	const virtualFields = doc.schema.options.virtuals;
 
 	// remove hidden fields
@@ -30,6 +37,7 @@ const mongooseTransformDocument = (doc, ret) => {
 	}
 	// add virtual fields
 	if (virtualFields && typeof virtualFields === 'string') {
+		//@ts-ignore
 		virtualFields.split(' ').forEach(prop => { ret[prop] = doc[prop]; });
 	}
 
@@ -41,29 +49,30 @@ const mongooseTransformDocument = (doc, ret) => {
 	return ret;
 };
 
-const mongooseExtendOptions = (Schema) => {
-	Object.entries(Schema.tree).forEach(([key, value]) => {
-		if (key !== 'id' && key !== '_id' && value.type && value.type.name === 'ObjectId') {
-			Schema.virtual(`${key}Id`).get(function stringify() {
-				return this[key] ? this[key].toString() : null;
-			});
-		}
-	});
+export interface ISearchOptions {
+	limit?: number;
+	populate?: boolean;
+	projection?: any;
+	skip?: number;
+	sortOrder?: number;
+	sortProperty?: string;
+}
 
+export const mongooseExtendOptions = (Schema: Schema) => {
 	Schema.set('timestamps', true);
 	Schema.set('strictQuery', true);
 	Schema.set('toObject', {
-		transform: (doc, ret, options) => {
-			mongooseTransformDocument(doc, ret, options);
+		transform: (doc, ret) => {
+			mongooseTransformDocument(doc, ret);
 		},
 	});
 	Schema.set('toJSON', {
-		transform: (doc, ret, options) => {
-			mongooseTransformDocument(doc, ret, options);
+		transform: (doc, ret) => {
+			mongooseTransformDocument(doc, ret);
 		},
 	});
 
-	Schema.statics.search = function search(queryParams = {}, options = {}) {
+	Schema.statics.search = function search(queryParams: any = {}, options: ISearchOptions = {}) {
 		let query = this.find(queryParams);
 
 		// Set option defaults
@@ -89,9 +98,11 @@ const mongooseExtendOptions = (Schema) => {
 
 		return query;
 	};
+
+	return Schema;
 };
 
-const searchOptions = (req) => {
+export const searchOptions = (req: any) => {
 	const options = {
 		limit: LIMIT,
 		populate: POPULATE,
@@ -146,10 +157,4 @@ const searchOptions = (req) => {
 	if (req.body) delete req.body.sortProperty;
 
 	return options;
-};
-
-module.exports = {
-	mongooseExtendOptions,
-	mongooseTransformDocument,
-	searchOptions,
 };

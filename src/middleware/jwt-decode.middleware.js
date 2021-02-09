@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const { UnauthorizedError } = require('gc-platform-utils/initializers/errors');
 
 const asyncWrap = require('./async.middleware');
 

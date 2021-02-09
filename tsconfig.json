@@ -1,0 +1,45 @@
+{
+    "compilerOptions": {
+      "sourceMap": true,
+      "esModuleInterop": true,
+      "declaration": true,
+      "declarationMap": true,
+      "allowJs": true,
+      "noImplicitAny": true,
+      "moduleResolution": "node",
+      "lib": ["es2018"],
+      "module": "commonjs",
+      "target": "es2018",
+      "baseUrl": ".",
+      "alwaysStrict": true /* Parse in strict mode and emit "use strict" for each source file. */,
+      "strictNullChecks": true,
+      /**
+       * Experimental Options - required by TypeORM
+       */
+      "experimentalDecorators": true /* Enables experimental support for ES7 decorators. */ ,
+      "emitDecoratorMetadata": true /* Enables experimental support for emitting type metadata for decorators. */ ,
+  
+      /* Additional Checks */
+      "noUnusedLocals": true /* Report errors on unused locals. */,
+      "noUnusedParameters": true /* Report errors on unused parameters. */,
+      "noImplicitReturns": true /* Report error when not all code paths in function return a value. */,
+      "noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */,
+  
+      /* Debugging Options */
+      "traceResolution": false /* Report module resolution log messages. */,
+      "listEmittedFiles": false /* Print names of generated files part of the compilation. */,
+      "listFiles": false /* Print names of files part of the compilation. */,
+      "pretty": true /* Stylize errors and messages using color and context. */,
+  
+      "paths": {
+        "*": ["node_modules/*", "src/types/*"]
+      },
+      "typeRoots": ["node_modules/@types", "src/types"],
+      "outDir": "./lib",
+      
+    },
+    "include": [
+        "src"
+    ],
+    "exclude": ["node_modules"]
+  }
