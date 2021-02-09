@@ -97,10 +97,6 @@ class BaseJob {
 			this.logger.error('Stalled', { event: 'stalled', job });
 		});
 
-		this.queue.on('global:stalled', (job) => {
-			this.logger.error('Global Stalled', {event: 'global:stalled', job });
-		});
-
 		this.queue.on('failed', (job, error) => {
 			this.logger.error(error, { event: 'failed', job });
 			apm.captureError(error);
@@ -108,7 +104,17 @@ class BaseJob {
 		this.queue.on('global:failed', (job, error) => {
 			this.logger.error(error, { event: 'global:failed', job });
 			apm.captureError(error);
+			const loggerPayload = { jobPayload: job.data, stallReason: job.failedReason, name: this.constructor.name, message: 'bull job stalled' };
+			this.logger.error(`[${this.constructor.name}: Stalled]`, loggerPayload);
+			apm.captureError(loggerPayload)
 		});
+
+		this.queue.on('failed', (job, error) => {
+			const loggerPayload = { jobPayload: job.data, failReason: job.failedReason, name: this.constructor.name, message: 'bull job failed' };
+			this.logger.error(error, loggerPayload);
+			apm.captureError({ error, ...loggerPayload });
+		});
+
 		this.queue.on('error', (error) => {
 			this.logger.error(error, { event: 'error' });
 			apm.captureError(error);

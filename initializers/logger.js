@@ -96,9 +96,9 @@ const createLogger = options => {
 	const resolvedOptions = {
 		...DEFAULT_OPTIONS,
 		...options
-	  };
+	};
 
-	if(!resolvedOptions.name) {
+	if (!resolvedOptions.name) {
 		throw Error('Logger name not provided for logger initializer.');
 	}
 
