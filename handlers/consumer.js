@@ -8,57 +8,64 @@ const SQS = new AWS.SQS({ apiVersion: '2012-11-05', endpoint: process.env.SQS_EN
 const { log } = require('../initializers');
 
 const handlers = {};
-const logger = log.gcLogger;
+
+const baseLogger = log.createLogger({ group: 'BaseConsumer' });
 
 class BaseConsumer {
+	constructor() {
+		this.logger = baseLogger.child({ group: this.constructor.name, consumerName: this.constructor.name });
+	}
+
 	static async run(queueUrl, options = {}) {
 		const consumer = Consumer.create({
 			batchSize: options.batchSize || 1,
 			queueUrl,
 			handleMessage: async (notification) => {
+				let logger = baseLogger.child({ subGroup: 'handleMessage' });
 				try {
 					if (notification && notification.Body) {
 						const message = JSON.parse(notification.Body);
 						const parts = message.TopicArn.split(':');
 						const { Timestamp: publishedAt, Message } = message;
 						const payload = { publishedAt, ...(JSON.parse(Message)) };
-						const messageTopic = parts[parts.length - 1];
+						const topic = parts[parts.length - 1];
 						const handler = Object.values(handlers).find((h) => {
-							return h.getTopic() === messageTopic;
+							return h.getTopic() === topic;
 						})
 						if (handler && handler.getJob()) {
 							const job = handler.getJob();
 							if (job) {
 								await job.enqueue(payload);
 							} else {
-								logger.error(`job not found for topic ${messageTopic}`);
-								throw new Error(`job not found for topic ${messageTopic}`);
+								logger.error('job not found for topic', { topic });
+								throw new Error(`job not found for topic ${topic}`);
 							}
 						} else if (handler) {
 							handler.work(payload);
 						} else {
-							logger.error(`handler not found for topic ${messageTopic}`);
-							throw new Error(`handler not found for topic ${messageTopic}`);
+							logger.error('handler not found for topic', { topic });
+							throw new Error(`handler not found for topic ${topic}`);
 						}
 					}
 				} catch (error) {
-					logger.error(error, { group: 'Consumer', subGroup: 'handleMessage' })
+					logger.error(error)
 					throw error;
 				}
 			},
 		});
 		consumer.on('error', (err) => {
-			logger.error(err, { group: 'Consumer' });
+			baseLogger.error(err, { event: 'error' });
 		});
 
 		consumer.on('processing_error', (err) => {
-			logger.error(err, { group: 'Consumer', subGroup: 'Processing' });
+			baseLogger.error(err, { event: 'processing_error' });
 		});
 
 		consumer.start();
 	}
 
 	static async connect(options = {}) {
+		const logger = baseLogger.child({ subGroup: 'connect' });
 		try {
 			const queue = (process.env.APP_CLUSTER && process.env.MESSAGE_BUS_CONSUMER_GROUP) ? `${process.env.APP_CLUSTER}-${process.env.MESSAGE_BUS_CONSUMER_GROUP}-message-bus` : `local-${process.pid}-message-bus`;
 
@@ -106,7 +113,7 @@ class BaseConsumer {
 				return SQS.setQueueAttributes(policyParams).promise();
 			}
 
-			const susbribeToTopic = (topicArn, queueArn) => {
+			const subscribeToTopic = (topicArn, queueArn) => {
 				SNS.subscribe({
 					TopicArn: topicArn,
 					Protocol: 'sqs',
@@ -141,7 +148,7 @@ class BaseConsumer {
 
 			const subscriptionPromises = topicResponses.map((topicResponse) => {
 				const topicArn = topicResponse.TopicArn;
-				return susbribeToTopic(topicArn, queueArn);
+				return subscribeToTopic(topicArn, queueArn);
 			})
 			await Promise.all(subscriptionPromises);
 

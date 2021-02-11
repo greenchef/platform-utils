@@ -5,7 +5,7 @@ const stackTrace = require('stacktrace-js');
 const DEFAULT_OPTIONS = {
 	name: process.env.LOGGER_NAME,
 	level: process.env.LOG_LEVEL || 'debug',
-	src: true,
+	src: false,
 	serializers: bunyan.stdSerializers,
 	stream: process.stdout,
 };
@@ -109,10 +109,10 @@ const createLogger = options => {
 };
 
 // temporary legacy support
-const logger = bunyan.createLogger(DEFAULT_OPTIONS);
+const logger = bunyan.createLogger({ ...DEFAULT_OPTIONS, src: true });
 
 // default implementation of new logger
-const gcLogger = createLogger({ src: false });
+const gcLogger = createLogger();
 
 module.exports = {
 	createLogger,

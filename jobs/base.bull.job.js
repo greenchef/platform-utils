@@ -8,7 +8,7 @@ class BaseJob {
 		if (!queueName) throw new Error('Queue name is required');
 		this.queue = null;
 		this.Joi = Joi;
-		this.logger = log.gcLogger;
+		this.logger = log.createLogger({ group: this.constructor.name, jobName: this.constructor.name, queueName });
 		this.queueName = queueName;
 		this.concurrency = concurrency;
 		const defaultQueueOptions = {
@@ -51,14 +51,14 @@ class BaseJob {
 	}
 
 	work(data, done) {
-		this.logger.error(`work method for ${this.queueName} is not implemented`);
+		this.logger.error('work method not implemented');
 		done();
 	}
 
 	connect() {
 		try {
 			this.queue = this.queue || new Queue(this.queueName, this.queueOpts);
-			this.logger.info(`${this.queueName} worker connected`);
+			this.logger.info('worker connected');
 		} catch (err) {
 			this.logger.error(err);
 		}
@@ -68,7 +68,7 @@ class BaseJob {
 	disconnect() {
 		try {
 			if (this.queue) this.queue.close();
-			this.logger.info(`${this.queueName} worker disconnected`);
+			this.logger.info('worker disconnected');
 		} catch (err) {
 			this.logger.error(err);
 		}
@@ -82,6 +82,10 @@ class BaseJob {
 				apmTransaction.end();
 				done(err);
 			}
+			this.logger = this.logger.child({ jobId: job.id, id: (job.data && job.data.id) });
+			if (this.logger.debug()) {
+				this.logger = this.logger.child({ data: job.data });
+			}
 			this.work(job.data, job, doneWrapper, apmTransaction);
 		});
 		this.queue.resume(); // resume any paused queues when service restarts
@@ -90,23 +94,23 @@ class BaseJob {
 
 	addListeners() {
 		this.queue.on('stalled', (job) => {
-			this.logger.error(`[${this.constructor.name}: Stalled], Job: ${JSON.stringify(job)}`);
+			this.logger.error('Stalled', { event: 'stalled', job });
 		});
 
 		this.queue.on('global:stalled', (job) => {
-			this.logger.error(`[${this.constructor.name}: Global Stalled], Job: ${JSON.stringify(job)}`);
+			this.logger.error('Global Stalled', {event: 'global:stalled', job });
 		});
 
 		this.queue.on('failed', (job, error) => {
-			this.logger.error(`[${this.constructor.name}: Failed] - ${error}, Job: ${JSON.stringify(job)}`);
+			this.logger.error(error, { event: 'failed', job });
 			apm.captureError(error);
 		});
 		this.queue.on('global:failed', (job, error) => {
-			this.logger.error(`[Base Bull Job: Global Failed] - ${error}, Job: ${JSON.stringify(job)}`);
+			this.logger.error(error, { event: 'global:failed', job });
 			apm.captureError(error);
 		});
 		this.queue.on('error', (error) => {
-			this.logger.error(`[${this.constructor.name}: Error] - ${error}`);
+			this.logger.error(error, { event: 'error' });
 			apm.captureError(error);
 		});
 	}

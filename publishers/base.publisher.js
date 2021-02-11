@@ -9,7 +9,7 @@ const { joi: Joi, log } = require('../initializers');
 class BasePublisher {
   constructor(topic, schema) {
     if (!topic) throw new Error('Topic name is required');
-    this.logger = log.gcLogger;
+    this.logger = log.createLogger({ group: this.constructor.name, publisherName: this.constructor.name });
     this.ready = false;
     this.schema = schema;
     this.topic = process.env.APP_CLUSTER ? `${process.env.APP_CLUSTER}-${topic}` : `local-${topic}`;
