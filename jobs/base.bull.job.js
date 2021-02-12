@@ -77,15 +77,20 @@ class BaseJob {
 	startWorker() {
 		this.queue.process(this.concurrency, async (job, done) => {
 			const apmTransaction = apm.startTransaction(this.constructor.name, 'job');
-			const doneWrapper = (err) => {
-				apmTransaction.result = err ? 'error' : 'success'
-				apmTransaction.end();
-				done(err);
-			}
+			const startTime = Date.now();
+
 			this.logger = this.logger.child({ jobId: job.id, id: (job.data && job.data.id) });
 			if (this.logger.debug()) {
 				this.logger = this.logger.child({ data: job.data });
 			}
+
+			const doneWrapper = (err) => {
+				apmTransaction.result = err ? 'error' : 'success'
+				apmTransaction.end();
+				this.logger.info(`Job completed in ${Date.now() - startTime} milliseconds`)
+				done(err);
+			}
+
 			this.work(job.data, job, doneWrapper, apmTransaction);
 		});
 		this.queue.resume(); // resume any paused queues when service restarts
@@ -95,24 +100,12 @@ class BaseJob {
 	addListeners() {
 		this.queue.on('stalled', (job) => {
 			this.logger.error('Stalled', { event: 'stalled', job });
+			apm.captureError({ message: `${this.constructor.name} stalled`, job });
 		});
 
 		this.queue.on('failed', (job, error) => {
 			this.logger.error(error, { event: 'failed', job });
-			apm.captureError(error);
-		});
-		this.queue.on('global:failed', (job, error) => {
-			this.logger.error(error, { event: 'global:failed', job });
-			apm.captureError(error);
-			const loggerPayload = { jobPayload: job.data, stallReason: job.failedReason, name: this.constructor.name, message: 'bull job stalled' };
-			this.logger.error(`[${this.constructor.name}: Stalled]`, loggerPayload);
-			apm.captureError(loggerPayload)
-		});
-
-		this.queue.on('failed', (job, error) => {
-			const loggerPayload = { jobPayload: job.data, failReason: job.failedReason, name: this.constructor.name, message: 'bull job failed' };
-			this.logger.error(error, loggerPayload);
-			apm.captureError({ error, ...loggerPayload });
+			apm.captureError({ error, job });
 		});
 
 		this.queue.on('error', (error) => {
