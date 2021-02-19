@@ -43,7 +43,8 @@ const createGcLogger = logger => ({
 				} else if (err.response && err.response.body) {
 					resData = `${err.response.statusMessage} ${err.response.body}`
 				}
-				message = `${data.supplementalMessage} ${resData}`;
+				data.responseData = resData;
+				message = `${data.supplementalMessage}`;
 			} else {
 				throw Error("First argument to log methods must be an Error or 'string' message");
 			}
