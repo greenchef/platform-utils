@@ -88,7 +88,7 @@ class BaseJob {
 				apmTransaction.result = err ? 'error' : 'success'
 				apmTransaction.end();
 				const executionTime = Date.now() - startTime
-				this.logger.debug(`${this.constructor.name} completed in ${executionTime} milliseconds`, { executionTime, attempt: job.attemptsMade, job: this.constructor.name })
+				this.logger.debug(`${this.constructor.name} completed in ${executionTime} milliseconds`, { executionTime, attempt: job.attemptsMade, startTime })
 				done(err);
 			}
 
