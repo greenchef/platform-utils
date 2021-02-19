@@ -87,7 +87,8 @@ class BaseJob {
 			const doneWrapper = (err) => {
 				apmTransaction.result = err ? 'error' : 'success'
 				apmTransaction.end();
-				this.logger.info(`Job completed in ${Date.now() - startTime} milliseconds`)
+				const executionTime = Date.now() - startTime
+				this.logger.debug(`${this.constructor.name} completed in ${executionTime} milliseconds`, { executionTime, attempt: job.attemptsMade, job: this.constructor.name })
 				done(err);
 			}
 
