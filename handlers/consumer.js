@@ -129,7 +129,8 @@ class BaseConsumer {
 			const { Attributes } = await getQueueAttrs(queueUrl);
 			const queueArn = Attributes.QueueArn;
 
-			const { QueueUrl: DeadLetterQueueUrl } = await createOrFetchQueue('dead-letter');
+			const deadLetterQueueName = process.env.APP_CLUSTER ? `${process.env.APP_CLUSTER}-dead-letter` : 'local-dead-leter';
+			const { QueueUrl: DeadLetterQueueUrl } = await createOrFetchQueue(deadLetterQueueName);
 			const deadLetterQueueUrl = DeadLetterQueueUrl;
 
 			const { Attributes: DeadLetterAttributes } = await getQueueAttrs(deadLetterQueueUrl);
