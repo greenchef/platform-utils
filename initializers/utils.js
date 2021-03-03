@@ -1,8 +1,7 @@
-const mongoose = require('mongoose');
-
 const { gcLogger: logger } = require('./logger');
 
 const createMongooseConnection = connectionString => {
+	const mongoose = require('mongoose');
 	mongoose.Promise = global.Promise;
 	try {
 		const connectWithRetry = () => {
