@@ -9,7 +9,7 @@ const admins = {
 	admin: { password: `${process.env.ARENA_PASSWORD}` },
 };
 
-module.exports = (req, res, next) => {
+const thing = (req, res, next) => {
 	const user = auth(req);
 	if (!user || !admins[user.name] || admins[user.name].password !== user.pass) {
 		res.set('WWW-Authenticate', 'Basic realm="Bull-Arena"');
