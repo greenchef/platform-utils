@@ -1,3 +1,7 @@
 const utils = require('./utils');
 
-module.exports = utils.createMongooseConnection(utils.getMongoConnectionString());
+const connect = () => utils.createMongooseConnection(utils.getMongoConnectionString());
+
+module.exports = {
+	connect,
+}
