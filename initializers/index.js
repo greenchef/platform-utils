@@ -7,8 +7,9 @@ const apm = require('./elastic-apm'); // This should always immediately follow d
 const errors = require('./errors');
 const joi = require('./joi');
 const log = require('./logger');
-const utils = require('./utils');
 const mongoose = require('./mongoose');
+const sequelize = require('./sequelize');
+const utils = require('./utils');
 
 module.exports = {
 	apm,
@@ -16,5 +17,6 @@ module.exports = {
 	joi,
 	log,
 	mongoose,
+	sequelize,
 	utils,
 };
