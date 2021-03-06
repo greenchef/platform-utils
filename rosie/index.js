@@ -1,7 +1,9 @@
-const mongoose = require('mongoose');
-
 const extendFactory = (factory, Model) => {
-	const clearAll = () => Model.deleteMany({});
+
+	const clearAll = () => {
+		if (Model.hasOwnProperty('deleteMany')) return Model.deleteMany({});
+		else if (Model.hasOwnProperty('destroy')) return Model.destroy({ truncate: true });
+	};
 
 	const create = (attrs = {}, options = {}) => {
 		try {
@@ -23,6 +25,7 @@ const extendFactory = (factory, Model) => {
 	};
 
 	const requestPayload = (attrs = {}) => {
+		const mongoose = require('mongoose');
 		const fac = factory.build(attrs);
 		Object.keys(fac).forEach((x) => {
 			if (fac[x] instanceof mongoose.Types.ObjectId) {
