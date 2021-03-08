@@ -1,8 +1,8 @@
 const extendFactory = (factory, Model) => {
 
 	const clearAll = () => {
-		if (Model.hasOwnProperty('deleteMany')) return Model.deleteMany({});
-		else if (Model.hasOwnProperty('destroy')) return Model.destroy({ truncate: true });
+		if (typeof Model.deleteMany === "function") return Model.deleteMany({});
+		else if (typeof Model.destroy === "function") return Model.destroy({ truncate: true });
 	};
 
 	const create = (attrs = {}, options = {}) => {
