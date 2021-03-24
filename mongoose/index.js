@@ -52,16 +52,13 @@ const mongooseExtendOptions = (Schema) => {
 
 	Schema.set('timestamps', true);
 	Schema.set('strictQuery', true);
-	Schema.set('toObject', {
-		transform: (doc, ret, options) => {
-			mongooseTransformDocument(doc, ret, options);
-		},
-	});
-	Schema.set('toJSON', {
-		transform: (doc, ret, options) => {
-			mongooseTransformDocument(doc, ret, options);
-		},
-	});
+	 
+	if (!Schema.options.toObject) Schema.options.toObject = {};
+	if (!Schema.options.toJSON) Schema.options.toJSON = {};
+	
+	Schema.options.toObject.transform = mongooseTransformDocument;
+	Schema.options.toJSON.transform = mongooseTransformDocument;
+	
 
 	Schema.statics.search = function search(queryParams = {}, options = {}) {
 		let query = this.find(queryParams);
