@@ -1,4 +1,12 @@
+const _ = require('lodash');
+
 const extendFactory = (factory, Model) => {
+	const clonedFactory = Object.assign({}, Object.getPrototypeOf(factory), factory);
+
+	const build = (attrs = {}, options = {}) => {
+		const built = clonedFactory.build({}, options);
+		return _.merge(built, attrs);
+	}
 
 	const clearAll = () => {
 		if (typeof Model.deleteMany === "function") return Model.deleteMany({});
@@ -53,7 +61,7 @@ const extendFactory = (factory, Model) => {
 		return createMany({ ...seedDefinition, ...params }, num);
 	}
 
-	Object.assign(factory, { create, createMany, clearAll, requestPayload, seed, seedMany });
+	Object.assign(factory, { build, create, createMany, clearAll, requestPayload, seed, seedMany });
 };
 
 module.exports = {
