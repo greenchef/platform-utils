@@ -1,11 +1,16 @@
 const _ = require('lodash');
 
 const extendFactory = (factory, Model) => {
-	const clonedFactory = Object.assign({}, Object.getPrototypeOf(factory), factory);
 
+	const clonedFactory = Object.assign({}, Object.getPrototypeOf(factory), factory);
+	
 	const build = (attrs = {}, options = {}) => {
 		const built = clonedFactory.build({}, options);
 		return _.merge(built, attrs);
+	}
+
+	const buildList = (num, attrs = {}, options = {}) => {
+		return Promise.all(Array.from(Array(num)).map(() => build(attrs, options)));
 	}
 
 	const clearAll = () => {
@@ -16,7 +21,7 @@ const extendFactory = (factory, Model) => {
 	const create = (attrs = {}, options = {}) => {
 		try {
 			if (!Model) return null;
-			return new Model(factory.build(attrs, options)).save();
+			return new Model(build(attrs, options)).save();
 		} catch (err) {
 			console.log(err);
 		}
@@ -34,7 +39,7 @@ const extendFactory = (factory, Model) => {
 
 	const requestPayload = (attrs = {}) => {
 		const mongoose = require('mongoose');
-		const fac = factory.build(attrs);
+		const fac = build(attrs);
 		Object.keys(fac).forEach((x) => {
 			if (fac[x] instanceof mongoose.Types.ObjectId) {
 				fac[x] = fac[x].toString();
@@ -61,7 +66,7 @@ const extendFactory = (factory, Model) => {
 		return createMany({ ...seedDefinition, ...params }, num);
 	}
 
-	Object.assign(factory, { build, create, createMany, clearAll, requestPayload, seed, seedMany });
+	Object.assign(factory, { build, buildList, create, createMany, clearAll, requestPayload, seed, seedMany });
 };
 
 module.exports = {
