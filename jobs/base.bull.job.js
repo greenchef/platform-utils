@@ -78,11 +78,6 @@ class BaseJob {
 		this.queue.process(this.concurrency, async (job, done) => {
 			const apmTransaction = apm.startTransaction(this.constructor.name, 'job');
 			const startTime = Date.now();
-			let ticks = 0;
-			const interval = setInterval(() => {
-				ticks++;
-			}, 5000);
-
 
 			this.logger = this.logger.child({ jobId: job.id, id: (job.data && job.data.id) });
 			if (this.logger.debug()) {
@@ -93,8 +88,7 @@ class BaseJob {
 				apmTransaction.result = err ? 'error' : 'success'
 				apmTransaction.end();
 				const executionTime = Date.now() - startTime
-				this.logger.debug(`${this.constructor.name} completed in ${executionTime} milliseconds`, { executionTime, attempt: job.attemptsMade, startTime, ticks })
-				if (interval) clearInterval(interval);
+				this.logger.debug(`${this.constructor.name} completed in ${executionTime} milliseconds`, { executionTime, attempt: job.attemptsMade, startTime })
 				done(err);
 			}
 
