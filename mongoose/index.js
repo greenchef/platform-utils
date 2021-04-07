@@ -87,6 +87,10 @@ const mongooseExtendOptions = (Schema) => {
 			query = query.sort({ [options.sortProperty]: options.sortOrder || SORT_ORDER });
 		}
 
+		if (options.lean) {
+			query = query.lean();
+		}
+
 		return query;
 	};
 };
