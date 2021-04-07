@@ -1,6 +1,8 @@
-const Arena = require('bull-arena');
 const express = require('express');
+const { router, setQueues, BullAdapter } = require('bull-board')
+
 const { log } = require('../initializers');
+
 
 const logger = log.gcLogger;
 
@@ -10,33 +12,14 @@ const arenaAuth = require('../initializers/arena-auth');
 const jobs = require('./models');
 
 const register = () => {
-	const arenaQueues = [];
-	// For all the jobs I'v loaded start their workers by calling connect()
+	const bullBoardQueues = [];
+	// For all the jobs I've loaded start their workers by calling connect()
 	jobs.modelNames().forEach((name) => {
-		jobs.model(name).connect();
-		arenaQueues.push({
-			hostId: 'gc',
-			name: jobs.model(name).queueName,
-			prefix: process.env.APP_CLUSTER || 'bull',
-			redis: {
-				db: parseInt(process.env.REDIS_BULL_DB) || 12,
-				host: `${process.env.REDIS_HOST}`,
-				port: parseInt(process.env.REDIS_PORT) || 6379,
-			}
-		});
+		const queue = jobs.model(name).connect();
+		bullBoardQueues.push(new BullAdapter(queue));
 	});
 
-	const arenaConfig = Arena(
-		{
-			queues: arenaQueues,
-		},
-		{
-			basePath: '/arena',
-			disableListen: true
-		}
-	);
-
-	// Make arena's resources (js/css deps) available at the base app route
+	setQueues(bullBoardQueues);
 
 	const app = express();
 
@@ -45,7 +28,8 @@ const register = () => {
 	app.set('port', parseInt(process.env.ARENA_PORT) || 4000);
 
 	app.use(arenaAuth);
-	app.use('/', arenaConfig);
+	app.use('/', router)
+
 
 	app.listen(app.get('port'), () => {
 		logger.info(`App is running at http://localhost:${app.get('port')} in ${app.get('env')} mode`);
