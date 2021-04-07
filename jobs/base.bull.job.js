@@ -63,6 +63,7 @@ class BaseJob {
 			this.logger.error(err);
 		}
 		this.startWorker();
+		return this.queue;
 	}
 
 	disconnect() {
