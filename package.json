@@ -1,6 +1,6 @@
 {
   "name": "gc-platform-utils",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "A collection of various utilities to be used across the Green Chef ecosystem.",
   "scripts": {
     "test": "jest"

@@ -22,12 +22,15 @@ class BaseJob {
 				removeOnComplete: true,
 				attempts: 1,
 				backoff: {
-					type: 'exponential',
+					type: 'fixed',
 					delay: 30000,
 				}
 			},
 			settings: {
-				maxStalledCount: 0,
+				lockDuration: 60000,
+				lockRenewTime: 10000,
+				maxStalledCount: 1,
+				stalledInterval: 60000,
 			}
 		};
 		this.queueOpts = merge(defaultQueueOptions, overrideQueueOptions);
