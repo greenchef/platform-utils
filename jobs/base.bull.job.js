@@ -11,6 +11,9 @@ class BaseJob {
 		this.logger = log.createLogger({ group: this.constructor.name, jobName: this.constructor.name, queueName });
 		this.queueName = queueName;
 		this.concurrency = concurrency;
+		const lockDuration = overrideQueueOptions && overrideQueueOptions.settings && overrideQueueOptions.settings.lockDuration
+			? overrideQueueOptions.settings.lockDuration
+			: 60000;
 		const defaultQueueOptions = {
 			prefix: process.env.APP_CLUSTER || 'bull',
 			redis: {
@@ -27,8 +30,8 @@ class BaseJob {
 				}
 			},
 			settings: {
-				lockDuration: 60000,
-				lockRenewTime: 10000,
+				lockDuration,
+				lockRenewTime: Math.ceil(lockDuration / 4),
 				maxStalledCount: 1,
 				stalledInterval: 60000,
 			}
